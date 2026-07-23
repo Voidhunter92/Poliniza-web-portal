@@ -23,10 +23,10 @@
           <div class="report-row">
             <div>
               <div class="report-row__title"><%= r.title %></div>
-              <div class="report-row__meta">Año <%= r.year %> · <%= r.type === 'pdf' ? 'PDF' : 'Informe interactivo' %></div>
+              <div class="report-row__meta">Año <%= r.year %> · <%= r.type === 'archivo' ? fileLabel(r.fileName) : 'Enlace externo' %></div>
             </div>
             <div class="report-row__actions">
-              <% if (r.type === 'pdf') { %>
+              <% if (r.type === 'archivo') { %>
                 <a href="/portal/cliente/informes/<%= r.id %>/ver" target="_blank" rel="noopener" class="btn btn--outline btn-xs">Ver</a>
                 <a href="/portal/cliente/informes/<%= r.id %>/descargar" class="btn btn--primary btn-xs">Descargar</a>
               <% } else { %>
@@ -47,10 +47,10 @@
           <div class="report-row">
             <div>
               <div class="report-row__title"><%= r.title %></div>
-              <div class="report-row__meta"><%= monthLabel(r.month, r.year) %> · <%= r.type === 'pdf' ? 'PDF' : 'Informe interactivo' %></div>
+              <div class="report-row__meta"><%= monthLabel(r.month, r.year) %> · <%= r.type === 'archivo' ? fileLabel(r.fileName) : 'Enlace externo' %></div>
             </div>
             <div class="report-row__actions">
-              <% if (r.type === 'pdf') { %>
+              <% if (r.type === 'archivo') { %>
                 <a href="/portal/cliente/informes/<%= r.id %>/ver" target="_blank" rel="noopener" class="btn btn--outline btn-xs">Ver</a>
                 <a href="/portal/cliente/informes/<%= r.id %>/descargar" class="btn btn--primary btn-xs">Descargar</a>
               <% } else { %>

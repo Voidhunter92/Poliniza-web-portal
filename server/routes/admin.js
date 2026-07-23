@@ -7,6 +7,7 @@ const { hashPassword } = require('../auth');
 const { ensureCsrfToken, verifyCsrf } = require('../csrf');
 const { makeId } = require('../ids');
 const { availableMonths, currentOrStartMonth, monthLabel } = require('../dateUtils');
+const { isAllowedExt, ACCEPT_ATTR, getLabel } = require('../fileTypes');
 
 const router = express.Router();
 
@@ -16,12 +17,12 @@ if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => cb(null, UPLOAD_DIR),
-    filename: (req, file, cb) => cb(null, `${makeId()}.pdf`),
+    filename: (req, file, cb) => cb(null, `${makeId()}${path.extname(file.originalname).toLowerCase()}`),
   }),
-  limits: { fileSize: 25 * 1024 * 1024 },
+  limits: { fileSize: 50 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const isPdf = file.mimetype === 'application/pdf' && /\.pdf$/i.test(file.originalname);
-    if (!isPdf) return cb(new Error('Solo se permiten archivos PDF.'));
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (!isAllowedExt(ext)) return cb(new Error('Formato no permitido. Subí un PDF, HTML, Word, Excel, PowerPoint o TXT.'));
     cb(null, true);
   },
 });
@@ -159,7 +160,7 @@ router.post('/clientes/:id/eliminar', verifyCsrf, (req, res) => {
   const remaining = [];
   reports.forEach((r) => {
     if (r.clientUsername === target.username) {
-      if (r.type === 'pdf' && r.fileName) {
+      if (r.type === 'archivo' && r.fileName) {
         const filePath = path.join(UPLOAD_DIR, r.fileName);
         fs.unlink(filePath, () => {});
       }
@@ -184,6 +185,8 @@ router.get('/informes', (req, res) => {
     activeTab: 'informes',
     reports,
     clients: clientUsers(),
+    acceptAttr: ACCEPT_ATTR,
+    fileLabel: (fileName) => getLabel(path.extname(fileName || '')),
     error: req.query.error || null,
     success: req.query.success || null,
     csrfToken: ensureCsrfToken(req),
@@ -229,9 +232,9 @@ router.post('/informes', (req, res, next) => {
     uploadedAt: new Date().toISOString(),
   };
 
-  if (type === 'pdf') {
-    if (!req.file) return fail('Subí un archivo PDF.');
-    report.type = 'pdf';
+  if (type === 'archivo') {
+    if (!req.file) return fail('Subí un archivo.');
+    report.type = 'archivo';
     report.fileName = req.file.filename;
     report.originalName = req.file.originalname;
   } else if (type === 'link') {
@@ -255,7 +258,7 @@ router.post('/informes/:id/eliminar', verifyCsrf, (req, res) => {
   const target = reports.find((r) => r.id === req.params.id);
   if (!target) return res.redirect('/portal/admin/informes?error=' + encodeURIComponent('Ese informe no existe.'));
 
-  if (target.type === 'pdf' && target.fileName) {
+  if (target.type === 'archivo' && target.fileName) {
     fs.unlink(path.join(UPLOAD_DIR, target.fileName), () => {});
   }
   db.reports.save(reports.filter((r) => r.id !== req.params.id));

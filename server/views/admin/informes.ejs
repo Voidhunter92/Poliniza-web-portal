@@ -5,7 +5,7 @@
     <div class="portal-header">
       <div>
         <h1>Informes de clientes</h1>
-        <p>Subí un PDF o pegá el enlace de un informe HTML y asignalo a un cliente.</p>
+        <p>Subí un archivo (PDF, HTML, Word, Excel, PowerPoint o TXT) o pegá un enlace externo, y asignalo a un cliente.</p>
       </div>
     </div>
 
@@ -62,20 +62,22 @@
         <div class="field">
           <label for="type">Tipo de informe</label>
           <select id="type" name="type" required onchange="
-            document.getElementById('pdfField').style.display = this.value === 'pdf' ? 'block' : 'none';
+            document.getElementById('archivoField').style.display = this.value === 'archivo' ? 'block' : 'none';
             document.getElementById('linkField').style.display = this.value === 'link' ? 'block' : 'none';
           ">
-            <option value="pdf">Archivo PDF (ej: exportado de Metricool)</option>
-            <option value="link">Enlace a informe HTML interactivo</option>
+            <option value="archivo">Archivo subido a este sitio (PDF, HTML, Word, Excel, PowerPoint, TXT)</option>
+            <option value="link">Enlace externo (URL a un sitio ya publicado)</option>
           </select>
         </div>
-        <div class="field" id="pdfField">
-          <label for="archivo">Archivo PDF</label>
-          <input type="file" id="archivo" name="archivo" accept="application/pdf" />
+        <div class="field" id="archivoField">
+          <label for="archivo">Archivo</label>
+          <input type="file" id="archivo" name="archivo" accept="<%= acceptAttr %>" />
+          <p class="field-hint">Un informe HTML interactivo (como el de PAR Equipamientos) se sube acá: queda alojado en este sitio y el cliente lo abre con un clic.</p>
         </div>
         <div class="field" id="linkField" style="display:none;">
           <label for="url">Enlace del informe</label>
           <input type="url" id="url" name="url" placeholder="https://..." />
+          <p class="field-hint">Usalo solo si el informe ya está publicado en otro sitio (por fuera de Poliniza).</p>
         </div>
 
         <div class="form-actions" style="max-width:220px;">
@@ -98,7 +100,7 @@
               <td><%= r.clientUsername %></td>
               <td><%= r.title %></td>
               <td class="nowrap"><%= r.period === 'mensual' ? (r.month + '/' + r.year) : ('Anual ' + r.year) %></td>
-              <td><span class="badge badge-<%= r.type %>"><%= r.type === 'pdf' ? 'PDF' : 'Enlace' %></span></td>
+              <td><span class="badge badge-<%= r.type === 'archivo' ? 'pdf' : 'link' %>"><%= r.type === 'archivo' ? fileLabel(r.fileName) : 'Enlace' %></span></td>
               <td class="nowrap"><%= new Date(r.uploadedAt).toLocaleDateString('es-AR') %></td>
               <td class="nowrap">
                 <form method="POST" action="/portal/admin/informes/<%= r.id %>/eliminar" style="display:inline" onsubmit="return confirm('¿Eliminar este informe?');">

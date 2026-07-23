@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const db = require('../db');
 const { monthLabel } = require('../dateUtils');
+const { getMime, getLabel } = require('../fileTypes');
 
 const router = express.Router();
 const UPLOAD_DIR = path.join(__dirname, '..', 'uploads', 'reports');
@@ -33,6 +34,7 @@ router.get('/', (req, res) => {
     anuales,
     mensualesPorAnio,
     monthLabel,
+    fileLabel: (fileName) => getLabel(path.extname(fileName || '')),
   });
 });
 
@@ -49,22 +51,24 @@ function findOwnReport(req, res) {
   return report;
 }
 
-function streamPdf(req, res, disposition) {
+function streamFile(req, res, disposition) {
   const report = findOwnReport(req, res);
   if (!report) return;
-  if (report.type !== 'pdf') {
-    return res.status(400).render('error', { title: 'Informe inválido', message: 'Este informe no es un archivo PDF.', user: req.session.user });
+  if (report.type !== 'archivo') {
+    return res.status(400).render('error', { title: 'Informe inválido', message: 'Este informe no es un archivo.', user: req.session.user });
   }
   const filePath = path.join(UPLOAD_DIR, report.fileName);
   if (!fs.existsSync(filePath)) {
     return res.status(404).render('error', { title: 'Archivo no encontrado', message: 'El archivo de este informe ya no está disponible. Avisale a Poliniza.', user: req.session.user });
   }
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', `${disposition}; filename="${(report.originalName || 'informe.pdf').replace(/"/g, '')}"`);
+  const ext = path.extname(report.fileName);
+  const safeName = (report.originalName || `informe${ext}`).replace(/"/g, '');
+  res.setHeader('Content-Type', getMime(ext));
+  res.setHeader('Content-Disposition', `${disposition}; filename="${safeName}"`);
   fs.createReadStream(filePath).pipe(res);
 }
 
-router.get('/informes/:id/ver', (req, res) => streamPdf(req, res, 'inline'));
-router.get('/informes/:id/descargar', (req, res) => streamPdf(req, res, 'attachment'));
+router.get('/informes/:id/ver', (req, res) => streamFile(req, res, 'inline'));
+router.get('/informes/:id/descargar', (req, res) => streamFile(req, res, 'attachment'));
 
 module.exports = router;
