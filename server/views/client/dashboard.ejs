@@ -1,0 +1,67 @@
+<%- include('../partials/head', { title: 'Mis informes' }) %>
+<div class="portal-shell">
+  <%- include('../partials/topbar', { user }) %>
+  <main class="portal-main">
+    <div class="portal-header">
+      <div>
+        <h1>Hola, <%= user.displayName %></h1>
+        <p>Acá encontrás tus informes mensuales y anuales.</p>
+      </div>
+    </div>
+
+    <% if (anuales.length === 0 && Object.keys(mensualesPorAnio).length === 0) { %>
+      <div class="portal-card">
+        <div class="empty-state">Todavía no tenés informes cargados. En cuanto Poliniza suba el primero, va a aparecer acá.</div>
+      </div>
+    <% } %>
+
+    <% if (anuales.length > 0) { %>
+    <div class="report-group">
+      <h3>Informes anuales</h3>
+      <div class="report-list">
+        <% anuales.forEach(function(r){ %>
+          <div class="report-row">
+            <div>
+              <div class="report-row__title"><%= r.title %></div>
+              <div class="report-row__meta">Año <%= r.year %> · <%= r.type === 'pdf' ? 'PDF' : 'Informe interactivo' %></div>
+            </div>
+            <div class="report-row__actions">
+              <% if (r.type === 'pdf') { %>
+                <a href="/portal/cliente/informes/<%= r.id %>/ver" target="_blank" rel="noopener" class="btn btn--outline btn-xs">Ver</a>
+                <a href="/portal/cliente/informes/<%= r.id %>/descargar" class="btn btn--primary btn-xs">Descargar</a>
+              <% } else { %>
+                <a href="<%= r.url %>" target="_blank" rel="noopener" class="btn btn--primary btn-xs">Abrir informe</a>
+              <% } %>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+    <% } %>
+
+    <% Object.keys(mensualesPorAnio).sort((a,b) => b-a).forEach(function(year){ %>
+    <div class="report-group">
+      <h3>Informes mensuales — <%= year %></h3>
+      <div class="report-list">
+        <% mensualesPorAnio[year].forEach(function(r){ %>
+          <div class="report-row">
+            <div>
+              <div class="report-row__title"><%= r.title %></div>
+              <div class="report-row__meta"><%= monthLabel(r.month, r.year) %> · <%= r.type === 'pdf' ? 'PDF' : 'Informe interactivo' %></div>
+            </div>
+            <div class="report-row__actions">
+              <% if (r.type === 'pdf') { %>
+                <a href="/portal/cliente/informes/<%= r.id %>/ver" target="_blank" rel="noopener" class="btn btn--outline btn-xs">Ver</a>
+                <a href="/portal/cliente/informes/<%= r.id %>/descargar" class="btn btn--primary btn-xs">Descargar</a>
+              <% } else { %>
+                <a href="<%= r.url %>" target="_blank" rel="noopener" class="btn btn--primary btn-xs">Abrir informe</a>
+              <% } %>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+    <% }); %>
+  </main>
+</div>
+<%- include('../partials/foot') %>

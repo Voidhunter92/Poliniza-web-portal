@@ -1,0 +1,120 @@
+<%- include('../partials/head', { title: 'Informes' }) %>
+<div class="portal-shell">
+  <%- include('../partials/topbar', { user, adminTabs, activeTab }) %>
+  <main class="portal-main">
+    <div class="portal-header">
+      <div>
+        <h1>Informes de clientes</h1>
+        <p>Subí un PDF o pegá el enlace de un informe HTML y asignalo a un cliente.</p>
+      </div>
+    </div>
+
+    <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+    <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+
+    <% if (clients.length === 0) { %>
+      <div class="portal-card">
+        <p>Todavía no creaste ninguna cuenta de cliente. <a href="/portal/admin/clientes">Creá una primero</a> para poder asignarle informes.</p>
+      </div>
+    <% } else { %>
+    <div class="portal-card">
+      <h2>Asignar nuevo informe</h2>
+      <form method="POST" action="/portal/admin/informes" enctype="multipart/form-data" id="reportForm">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="field--row">
+          <div class="field">
+            <label for="clientUsername">Cliente</label>
+            <select id="clientUsername" name="clientUsername" required>
+              <% clients.forEach(function(c){ %>
+                <option value="<%= c.username %>"><%= c.displayName %> (<%= c.username %>)</option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="field">
+            <label for="title">Título del informe</label>
+            <input type="text" id="title" name="title" placeholder="Ej: Informe mensual - Julio 2026" required />
+          </div>
+        </div>
+
+        <div class="field--row">
+          <div class="field">
+            <label for="period">Período</label>
+            <select id="period" name="period" required onchange="document.getElementById('monthField').style.display = this.value === 'mensual' ? 'block' : 'none';">
+              <option value="mensual">Mensual</option>
+              <option value="anual">Anual</option>
+            </select>
+          </div>
+          <div class="field" id="monthField">
+            <label for="month">Mes</label>
+            <select id="month" name="month">
+              <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+              <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+              <option value="7" selected>Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+              <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="year">Año</label>
+            <input type="number" id="year" name="year" value="2026" min="2020" max="2100" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="type">Tipo de informe</label>
+          <select id="type" name="type" required onchange="
+            document.getElementById('pdfField').style.display = this.value === 'pdf' ? 'block' : 'none';
+            document.getElementById('linkField').style.display = this.value === 'link' ? 'block' : 'none';
+          ">
+            <option value="pdf">Archivo PDF (ej: exportado de Metricool)</option>
+            <option value="link">Enlace a informe HTML interactivo</option>
+          </select>
+        </div>
+        <div class="field" id="pdfField">
+          <label for="archivo">Archivo PDF</label>
+          <input type="file" id="archivo" name="archivo" accept="application/pdf" />
+        </div>
+        <div class="field" id="linkField" style="display:none;">
+          <label for="url">Enlace del informe</label>
+          <input type="url" id="url" name="url" placeholder="https://..." />
+        </div>
+
+        <div class="form-actions" style="max-width:220px;">
+          <button type="submit" class="btn btn--primary">Asignar informe</button>
+        </div>
+      </form>
+    </div>
+    <% } %>
+
+    <div class="portal-card">
+      <h2>Informes asignados</h2>
+      <div class="table-wrap">
+        <table class="portal-table">
+          <thead>
+            <tr><th>Cliente</th><th>Título</th><th>Período</th><th>Tipo</th><th>Subido</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>
+            <% reports.forEach(function(r){ %>
+            <tr>
+              <td><%= r.clientUsername %></td>
+              <td><%= r.title %></td>
+              <td class="nowrap"><%= r.period === 'mensual' ? (r.month + '/' + r.year) : ('Anual ' + r.year) %></td>
+              <td><span class="badge badge-<%= r.type %>"><%= r.type === 'pdf' ? 'PDF' : 'Enlace' %></span></td>
+              <td class="nowrap"><%= new Date(r.uploadedAt).toLocaleDateString('es-AR') %></td>
+              <td class="nowrap">
+                <form method="POST" action="/portal/admin/informes/<%= r.id %>/eliminar" style="display:inline" onsubmit="return confirm('¿Eliminar este informe?');">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                  <button type="submit" class="btn btn-danger btn-xs">Eliminar</button>
+                </form>
+              </td>
+            </tr>
+            <% }); %>
+            <% if (reports.length === 0) { %>
+            <tr><td colspan="6" class="empty-state">Todavía no asignaste ningún informe.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<%- include('../partials/foot') %>

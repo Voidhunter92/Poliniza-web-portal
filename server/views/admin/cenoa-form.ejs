@@ -1,0 +1,85 @@
+<%- include('../partials/head', { title: mode === 'nuevo' ? 'Nuevo contenido CENOA' : 'Editar contenido CENOA' }) %>
+<div class="portal-shell">
+  <%- include('../partials/topbar', { user, adminTabs, activeTab }) %>
+  <main class="portal-main" style="max-width:640px;">
+    <div class="portal-header"><h1><%= mode === 'nuevo' ? 'Nuevo contenido' : 'Editar contenido' %></h1></div>
+
+    <div class="portal-card">
+      <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+      <form method="POST" action="<%= mode === 'nuevo' ? '/portal/admin/cenoa' : ('/portal/admin/cenoa/' + item.id + '/editar') %>">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+        <div class="field--row">
+          <div class="field">
+            <label for="tipo">Tipo</label>
+            <select id="tipo" name="tipo" required>
+              <option value="placa" <%= item.tipo === 'placa' ? 'selected' : '' %>>Placa</option>
+              <option value="video" <%= item.tipo === 'video' ? 'selected' : '' %>>Video</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="empresa">Empresa</label>
+            <input type="text" id="empresa" name="empresa" value="<%= item.empresa || '' %>" placeholder="Ej: Carbian, Voge, Autolux..." required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="titulo">Título / pieza</label>
+          <input type="text" id="titulo" name="titulo" value="<%= item.titulo || '' %>" placeholder="Ej: Viaje al Norte" required />
+        </div>
+
+        <div class="field--row">
+          <div class="field">
+            <label for="monthYear">Mes</label>
+            <select id="monthYear" name="monthYear" required>
+              <% months.forEach(function(m){ %>
+                <option value="<%= m.month %>-<%= m.year %>" <%= (m.month === item.month && m.year === item.year) ? 'selected' : '' %>><%= m.label %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="field">
+            <label for="numPiezas">Número de piezas</label>
+            <input type="number" id="numPiezas" name="numPiezas" value="<%= item.numPiezas || 1 %>" min="1" required />
+          </div>
+        </div>
+
+        <div class="field--row">
+          <div class="field">
+            <label for="fechaPedido">Fecha de pedido</label>
+            <input type="date" id="fechaPedido" name="fechaPedido" value="<%= item.fechaPedido || '' %>" />
+          </div>
+          <div class="field">
+            <label for="fechaEntrega">Fecha de entrega</label>
+            <input type="date" id="fechaEntrega" name="fechaEntrega" value="<%= item.fechaEntrega || '' %>" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="copy">Copy</label>
+          <textarea id="copy" name="copy" placeholder="Texto de la publicación..."><%= item.copy || '' %></textarea>
+        </div>
+
+        <div class="field">
+          <label for="driveLink">Enlace de Drive a la carpeta</label>
+          <input type="url" id="driveLink" name="driveLink" value="<%= item.driveLink || '' %>" placeholder="https://drive.google.com/..." />
+        </div>
+
+        <div class="field">
+          <label for="estado">Estado de aprobación</label>
+          <select id="estado" name="estado" required>
+            <option value="revisar" <%= item.estado === 'revisar' ? 'selected' : '' %>>A revisar</option>
+            <option value="aprobado" <%= item.estado === 'aprobado' ? 'selected' : '' %>>Aprobado</option>
+            <option value="desaprobado" <%= item.estado === 'desaprobado' ? 'selected' : '' %>>Desaprobado</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <a href="/portal/admin/cenoa?year=<%= item.year %>&month=<%= item.month %>&tipo=<%= item.tipo %>" class="btn btn--outline">Cancelar</a>
+          <button type="submit" class="btn btn--primary"><%= mode === 'nuevo' ? 'Crear' : 'Guardar cambios' %></button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+<%- include('../partials/foot') %>

@@ -1,0 +1,9 @@
+<%- include('partials/head', { title: title || 'Error' }) %>
+<div class="portal-login">
+  <div class="portal-login__card">
+    <h1><%= title || 'Ups' %></h1>
+    <p class="sub"><%= message %></p>
+    <a href="<%= user ? (user.role === 'admin' ? '/portal/admin/clientes' : (user.role === 'cenoa' ? '/portal/cenoa' : '/portal/cliente')) : '/portal/login' %>" class="btn btn--outline">Volver</a>
+  </div>
+</div>
+<%- include('partials/foot') %>

@@ -1,0 +1,82 @@
+<%- include('../partials/head', { title: 'Dashboard CENOA' }) %>
+<div class="portal-shell">
+  <%- include('../partials/topbar', { user }) %>
+  <main class="portal-main">
+    <div class="portal-header">
+      <div>
+        <h1>Seguimiento de contenidos</h1>
+        <p>Revisá cada pieza y marcá su estado de aprobación.</p>
+      </div>
+    </div>
+
+    <form method="GET" action="/portal/cenoa" class="month-nav">
+      <select name="year" onchange="this.form.submit()">
+        <% [...new Set(months.map(m => m.year))].forEach(function(y){ %>
+          <option value="<%= y %>" <%= y === year ? 'selected' : '' %>><%= y %></option>
+        <% }); %>
+      </select>
+      <select name="month" onchange="this.form.submit()">
+        <% months.filter(m => m.year === year).forEach(function(m){ %>
+          <option value="<%= m.month %>" <%= m.month === month ? 'selected' : '' %>><%= m.label.split(' ')[0] %></option>
+        <% }); %>
+      </select>
+      <input type="hidden" name="tipo" value="<%= tipo %>" />
+    </form>
+
+    <div class="tabs-inline">
+      <a href="/portal/cenoa?year=<%= year %>&month=<%= month %>&tipo=placa" class="<%= tipo === 'placa' ? 'active' : '' %>">Placas</a>
+      <a href="/portal/cenoa?year=<%= year %>&month=<%= month %>&tipo=video" class="<%= tipo === 'video' ? 'active' : '' %>">Videos</a>
+    </div>
+
+    <div class="portal-stats">
+      <div class="portal-stat"><strong><%= items.length %></strong><span>Total</span></div>
+      <div class="portal-stat"><strong><%= items.filter(i => i.estado === 'aprobado').length %></strong><span>Aprobados</span></div>
+      <div class="portal-stat"><strong><%= items.filter(i => i.estado === 'desaprobado').length %></strong><span>Desaprobados</span></div>
+      <div class="portal-stat"><strong><%= items.filter(i => i.estado === 'revisar').length %></strong><span>A revisar</span></div>
+    </div>
+
+    <div class="portal-card">
+      <h2><%= tipo === 'placa' ? 'Placas' : 'Videos' %> — <%= monthLabelText %></h2>
+      <div class="table-wrap">
+        <table class="portal-table">
+          <thead>
+            <tr>
+              <th>Empresa</th><th>Título</th><th>Piezas</th><th>Pedido</th><th>Entrega</th>
+              <th>Copy</th><th>Drive</th><th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% items.forEach(function(i){ %>
+            <tr>
+              <td><%= i.empresa %></td>
+              <td><%= i.titulo %></td>
+              <td><%= i.numPiezas %></td>
+              <td class="nowrap"><%= i.fechaPedido || '—' %></td>
+              <td class="nowrap"><%= i.fechaEntrega || '—' %></td>
+              <td><div class="copy-cell"><%= i.copy || '—' %></div></td>
+              <td><% if (i.driveLink) { %><a href="<%= i.driveLink %>" target="_blank" rel="noopener">Abrir</a><% } else { %>—<% } %></td>
+              <td>
+                <form method="POST" action="/portal/cenoa/<%= i.id %>/estado" class="estado-form">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                  <input type="hidden" name="year" value="<%= year %>" />
+                  <input type="hidden" name="month" value="<%= month %>" />
+                  <input type="hidden" name="tipo" value="<%= tipo %>" />
+                  <select name="estado" class="estado-select estado-<%= i.estado %>" onchange="this.className = 'estado-select estado-' + this.value; this.form.submit();">
+                    <option value="revisar" <%= i.estado === 'revisar' ? 'selected' : '' %>>A revisar</option>
+                    <option value="aprobado" <%= i.estado === 'aprobado' ? 'selected' : '' %>>Aprobado</option>
+                    <option value="desaprobado" <%= i.estado === 'desaprobado' ? 'selected' : '' %>>Desaprobado</option>
+                  </select>
+                </form>
+              </td>
+            </tr>
+            <% }); %>
+            <% if (items.length === 0) { %>
+            <tr><td colspan="8" class="empty-state">No hay contenidos cargados para este mes todavía.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<%- include('../partials/foot') %>

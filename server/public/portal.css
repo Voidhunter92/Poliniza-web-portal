@@ -1,0 +1,135 @@
+/* Portal de clientes — usa los tokens de marca definidos en /css/style.css */
+
+body.portal-body{
+  background: var(--crema-2);
+  min-height: 100vh;
+  font-family: var(--font-body);
+}
+
+/* ===== Login ===== */
+.portal-login{
+  min-height: 100vh;
+  display:flex; align-items:center; justify-content:center;
+  padding: 24px;
+  background: linear-gradient(180deg, var(--crema) 0%, #E4EDD8 100%);
+}
+.portal-login__card{
+  width:100%; max-width: 380px; background:#fff; border-radius: var(--radius);
+  box-shadow: var(--shadow-md); padding: 40px 32px; text-align:center;
+}
+.portal-login__logo{ height: 52px; margin: 0 auto 24px; }
+.portal-login__card h1{ font-size: 1.3rem; margin-bottom: 6px; }
+.portal-login__card p.sub{ color: var(--texto-suave); font-size:.92rem; margin-bottom: 24px; }
+
+/* ===== Forms ===== */
+.field{ text-align:left; margin-bottom: 16px; }
+.field label{ display:block; font-family: var(--font-title); font-weight:600; font-size:.85rem; color: var(--verde-oscuro); margin-bottom: 6px; }
+.field input, .field select, .field textarea{
+  width:100%; padding: 11px 14px; border-radius: 10px; border: 1.5px solid rgba(9,60,45,.15);
+  font-family: var(--font-body); font-size:.98rem; color: var(--texto); background:#fff;
+}
+.field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color: var(--verde-oscuro); }
+.field textarea{ resize: vertical; min-height: 90px; }
+.field--row{ display:flex; gap:12px; }
+.field--row .field{ flex:1; }
+.field-hint{ font-size:.8rem; color: var(--texto-suave); margin-top:4px; }
+
+.form-actions{ display:flex; gap:12px; margin-top: 8px; }
+.form-actions .btn{ width:100%; justify-content:center; }
+
+.alert{ border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; font-size:.9rem; text-align:left; font-family: var(--font-title); }
+.alert-error{ background: rgba(237,107,109,.12); color: #9c3232; border: 1px solid rgba(237,107,109,.35); }
+.alert-success{ background: rgba(161,202,117,.2); color: var(--verde-oscuro); border: 1px solid rgba(161,202,117,.5); }
+
+/* ===== Shell / topbar ===== */
+.portal-shell{ min-height: 100vh; display:flex; flex-direction:column; }
+.portal-topbar{
+  background: var(--verde-oscuro); color:#fff; padding: 14px 24px;
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+}
+.portal-topbar__brand{ display:flex; align-items:center; gap:10px; }
+.portal-topbar__brand img{ height: 30px; }
+.portal-topbar__brand span{ font-family: var(--font-title); font-weight:600; font-size:.85rem; opacity:.8; }
+.portal-topbar__right{ display:flex; align-items:center; gap:16px; font-size:.88rem; }
+.portal-topbar__right a{ color: rgba(255,255,255,.85); font-family: var(--font-title); font-weight:500; }
+.portal-topbar__right a:hover{ color: var(--amarillo); }
+
+.portal-tabs{
+  display:flex; gap:4px; background:#fff; padding: 0 20px; border-bottom: 1px solid rgba(9,60,45,.1);
+  overflow-x:auto;
+}
+.portal-tabs a{
+  padding: 14px 16px; font-family: var(--font-title); font-weight:600; font-size:.88rem;
+  color: var(--texto-suave); border-bottom: 3px solid transparent; white-space:nowrap;
+}
+.portal-tabs a.active, .portal-tabs a:hover{ color: var(--verde-oscuro); border-bottom-color: var(--amarillo); }
+
+.portal-main{ flex:1; padding: 32px 24px 60px; max-width: 1180px; margin:0 auto; width:100%; }
+.portal-header{ display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px; margin-bottom: 24px; }
+.portal-header h1{ font-size: 1.6rem; margin:0; }
+.portal-header p{ color: var(--texto-suave); margin: 4px 0 0; font-size:.94rem; }
+
+/* ===== Cards / tables ===== */
+.portal-card{ background:#fff; border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow-sm); margin-bottom: 24px; border: 1px solid rgba(9,60,45,.06); }
+.portal-card h2{ font-size: 1.15rem; margin-bottom: 16px; }
+
+.portal-stats{ display:grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap:14px; margin-bottom:24px; }
+.portal-stat{ background:#fff; border-radius: 14px; padding: 18px; text-align:center; box-shadow: var(--shadow-sm); border: 1px solid rgba(9,60,45,.06); }
+.portal-stat strong{ display:block; font-family: var(--font-title); font-size: 1.7rem; color: var(--verde-oscuro); }
+.portal-stat span{ font-size:.8rem; color: var(--texto-suave); text-transform:uppercase; letter-spacing:.03em; }
+
+.table-wrap{ overflow-x:auto; }
+table.portal-table{ width:100%; border-collapse: collapse; font-size:.92rem; }
+.portal-table th{ text-align:left; font-family: var(--font-title); font-size:.78rem; text-transform:uppercase; letter-spacing:.03em; color: var(--texto-suave); padding: 10px 12px; border-bottom: 2px solid rgba(9,60,45,.08); white-space:nowrap; }
+.portal-table td{ padding: 12px; border-bottom: 1px solid rgba(9,60,45,.06); vertical-align:top; }
+.portal-table tr:hover td{ background: rgba(9,60,45,.02); }
+.portal-table td.nowrap{ white-space:nowrap; }
+.copy-cell{ max-width: 260px; max-height: 4.5em; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; font-size:.85rem; color: var(--texto-suave); }
+
+.badge{ display:inline-block; padding: 4px 12px; border-radius:999px; font-family: var(--font-title); font-weight:600; font-size:.76rem; white-space:nowrap; }
+.badge-aprobado{ background: rgba(161,202,117,.25); color:#3b6b1f; }
+.badge-desaprobado{ background: rgba(237,107,109,.18); color:#9c3232; }
+.badge-revisar{ background: rgba(247,195,39,.25); color:#8a6a0a; }
+.badge-client{ background: rgba(9,60,45,.08); color: var(--verde-oscuro); }
+.badge-cenoa{ background: rgba(185,192,51,.22); color:#6b6f18; }
+.badge-admin{ background: rgba(237,107,109,.15); color:#9c3232; }
+.badge-pdf{ background: rgba(9,60,45,.08); color: var(--verde-oscuro); }
+.badge-link{ background: rgba(161,202,117,.22); color:#3b6b1f; }
+
+select.estado-select{ padding:6px 10px; border-radius:8px; font-family: var(--font-title); font-weight:600; font-size:.82rem; border:1.5px solid rgba(9,60,45,.15); }
+select.estado-select.estado-aprobado{ background: rgba(161,202,117,.18); }
+select.estado-select.estado-desaprobado{ background: rgba(237,107,109,.15); }
+select.estado-select.estado-revisar{ background: rgba(247,195,39,.18); }
+
+.btn-xs{ padding: 6px 12px; font-size:.78rem; border-radius: 999px; }
+.btn-danger{ background: var(--coral); color:#fff; }
+.btn-danger:hover{ background:#d85557; }
+.icon-btn{ display:inline-flex; align-items:center; gap:6px; }
+
+.month-nav{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom: 20px; }
+.month-nav select{ padding: 9px 14px; border-radius:10px; border:1.5px solid rgba(9,60,45,.15); font-family: var(--font-title); font-weight:600; }
+
+.empty-state{ text-align:center; padding: 40px 20px; color: var(--texto-suave); }
+
+.report-group{ margin-bottom: 28px; }
+.report-group h3{ font-size: 1.05rem; margin-bottom: 12px; color: var(--verde-oscuro); }
+.report-list{ display:grid; gap:12px; }
+.report-row{
+  display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  background:#fff; border-radius:14px; padding:16px 18px; box-shadow: var(--shadow-sm); border:1px solid rgba(9,60,45,.06);
+}
+.report-row__title{ font-family: var(--font-title); font-weight:600; color: var(--verde-oscuro); }
+.report-row__meta{ font-size:.8rem; color: var(--texto-suave); margin-top:2px; }
+.report-row__actions{ display:flex; gap:8px; flex-wrap:wrap; }
+
+.tabs-inline{ display:flex; gap:8px; margin-bottom: 18px; }
+.tabs-inline a{
+  padding: 9px 18px; border-radius: 999px; font-family: var(--font-title); font-weight:600; font-size:.85rem;
+  background: rgba(9,60,45,.06); color: var(--verde-oscuro);
+}
+.tabs-inline a.active{ background: var(--verde-oscuro); color:#fff; }
+
+@media (max-width: 640px){
+  .field--row{ flex-direction:column; gap:0; }
+  .portal-main{ padding: 20px 14px 50px; }
+}

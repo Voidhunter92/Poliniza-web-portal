@@ -1,0 +1,41 @@
+<%- include('../partials/head', { title: 'Editar cuenta' }) %>
+<div class="portal-shell">
+  <%- include('../partials/topbar', { user, adminTabs, activeTab }) %>
+  <main class="portal-main" style="max-width:520px;">
+    <div class="portal-header"><h1>Editar cuenta: <%= target.displayName %></h1></div>
+
+    <div class="portal-card">
+      <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+      <form method="POST" action="/portal/admin/clientes/<%= target.id %>/editar">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="field">
+          <label for="displayName">Nombre a mostrar</label>
+          <input type="text" id="displayName" name="displayName" value="<%= target.displayName %>" required />
+        </div>
+        <div class="field">
+          <label>Usuario</label>
+          <input type="text" value="<%= target.username %>" disabled />
+          <p class="field-hint">El nombre de usuario no se puede cambiar. Si hace falta, eliminá la cuenta y creá una nueva.</p>
+        </div>
+        <div class="field">
+          <label for="role">Tipo de acceso</label>
+          <select id="role" name="role" required>
+            <option value="client" <%= target.role === 'client' ? 'selected' : '' %>>Cliente (ve sus informes)</option>
+            <option value="cenoa" <%= target.role === 'cenoa' ? 'selected' : '' %>>CENOA (dashboard de contenidos)</option>
+            <option value="admin" <%= target.role === 'admin' ? 'selected' : '' %>>Administrador</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="password">Nueva contraseña (opcional)</label>
+          <input type="text" id="password" name="password" minlength="6" placeholder="Dejar vacío para no cambiarla" />
+        </div>
+        <div class="form-actions">
+          <a href="/portal/admin/clientes" class="btn btn--outline">Volver</a>
+          <button type="submit" class="btn btn--primary">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+<%- include('../partials/foot') %>

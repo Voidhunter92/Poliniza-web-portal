@@ -1,0 +1,18 @@
+<header class="portal-topbar">
+  <div class="portal-topbar__brand">
+    <img src="/assets/img/logo-apaisado-sinbajada-blanco.png" alt="Poliniza" />
+    <span>Portal de clientes</span>
+  </div>
+  <div class="portal-topbar__right">
+    <span><%= user.displayName %></span>
+    <a href="/portal/cambiar-password">Cambiar contraseña</a>
+    <a href="/portal/logout">Cerrar sesión</a>
+  </div>
+</header>
+<% if (typeof adminTabs !== 'undefined' && adminTabs) { %>
+<nav class="portal-tabs">
+  <a href="/portal/admin/clientes" class="<%= activeTab === 'clientes' ? 'active' : '' %>">Clientes</a>
+  <a href="/portal/admin/informes" class="<%= activeTab === 'informes' ? 'active' : '' %>">Informes</a>
+  <a href="/portal/admin/cenoa" class="<%= activeTab === 'cenoa' ? 'active' : '' %>">Dashboard CENOA</a>
+</nav>
+<% } %>
